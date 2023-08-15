@@ -1,6 +1,7 @@
-const url = 'https://api.openai.com/v1/audio/transcriptions'
+const defaultBaseURL = 'https://api.openai.com'
+const path = '/v1/audio/transcriptions'
 
-const transcribe = (apiKey, file, language, response_format) => {
+const transcribe = (baseURL, apiKey, file, language, response_format) => {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('model', 'whisper-1')
@@ -12,7 +13,7 @@ const transcribe = (apiKey, file, language, response_format) => {
     const headers = new Headers()
     headers.append('Authorization', `Bearer ${apiKey}`)
 
-    return fetch(url, {
+    return fetch(baseURL + path, {
         method: 'POST',
         body: formData,
         headers: headers
@@ -56,6 +57,17 @@ const setupAPIKeyInput = () => {
     }
 }
 
+const setupBaseURLInput = () => {
+    localStorage.setItem('base-url', defaultBaseURL)
+    const element = document.querySelector('#base-url')
+    const savedBaseURL = localStorage.getItem('base-url') || ''
+    element.value = savedBaseURL
+    element.addEventListener('input', () => {
+        const baseUrl = element.value
+        console.log('saving:', baseUrl)
+        localStorage.setItem('base-url', baseUrl)
+    })
+}
 
 const updateTextareaSize = (element) => {
     element.style.height = 0
@@ -95,6 +107,7 @@ const setTranscribedSegments = (segments) => {
 
 window.addEventListener('load', () => {
     setupAPIKeyInput()
+    setupBaseURLInput()
     outputElement = document.querySelector('#output')
 
     const fileInput = document.querySelector('#audio-file')
@@ -102,10 +115,11 @@ window.addEventListener('load', () => {
         setTranscribingMessage('Transcribing...')
 
         const apiKey = localStorage.getItem('api-key')
+        const baseUrl = localStorage.getItem('base-url')
         const file = fileInput.files[0]
         const language = document.querySelector('#language').value
         const response_format = document.querySelector('#response_format').value
-        const response = transcribe(apiKey, file, language, response_format)
+        const response = transcribe(baseUrl, apiKey, file, language, response_format)
 
         response.then(transcription => {
             if (response_format === 'verbose_json') {
