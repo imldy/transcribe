@@ -1,6 +1,6 @@
 # Transcribe Audio
 
-Web UI for Open AI Whisper API
+Web UI for Open AI Whisper API, Support for custom baseURL endpoints. 
 
 https://transcribe.bloat.app
 
