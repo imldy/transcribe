@@ -58,10 +58,14 @@ const setupAPIKeyInput = () => {
 }
 
 const setupBaseURLInput = () => {
-    localStorage.setItem('base-url', defaultBaseURL)
     const element = document.querySelector('#base-url')
-    const savedBaseURL = localStorage.getItem('base-url') || ''
-    element.value = savedBaseURL
+    const savedBaseURL = localStorage.getItem('base-url')
+    if (!savedBaseURL) {
+        element.value = defaultBaseURL
+        localStorage.setItem('base-url', defaultBaseURL)
+    } else {
+        element.value = savedBaseURL
+    }
     element.addEventListener('input', () => {
         const baseUrl = element.value
         console.log('saving:', baseUrl)
